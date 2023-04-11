@@ -1,2 +1,24 @@
 ﻿  cache_simulator.cpp
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(30,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(31,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(32,57): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(70,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(71,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(72,56): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(79,12): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(138,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(140,57): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(168,2): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_simulator.cpp(55,11): warning C4101: 'count': unreferenced local variable
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include\tuple(631,76): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=__int64
+          ]
+          and
+          [
+              _Ty=int
+          ]
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(91): message : see reference to function template instantiation 'std::tuple<int,int,int,char> &std::tuple<int,int,int,char>::operator =<__int64,__int64,__int64,char,0>(std::tuple<__int64,__int64,__int64,char> &&) noexcept' being compiled
+C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(91): message : see reference to function template instantiation 'std::tuple<int,int,int,char> &std::tuple<int,int,int,char>::operator =<__int64,__int64,__int64,char,0>(std::tuple<__int64,__int64,__int64,char> &&) noexcept' being compiled
   cache_simulator.vcxproj -> C:\Users\steve\source\cda3101\cache_simulator\x64\Debug\cache_simulator.exe
