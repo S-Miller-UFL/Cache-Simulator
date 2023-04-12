@@ -5,7 +5,7 @@
 #include <math.h>
 #include <vector>
 #include <queue>
-int counter = 1;
+int counter = 0;
 int slots = 0;
 int bintoint(std::string binary)
 {
@@ -28,15 +28,26 @@ private:
 	int hit = 0;
 	int miss = 0;
 	//std::map<int,block*> cache;
-	std::vector <std::tuple<long long, long long , long long, char >> cache;
+	//use map instead
+	//std::map<line,tag>
+	std::map <int, int> cache;
 	float hitrate = 0;
 };
 void direct_cache::initialize_cache(int numberoflines)
 {
+	if (cache.size() > 0)
+	{
+		cache.clear();
+	}
 	for (int i = 0; i < numberoflines; i++)
 	{
-		cache.push_back(std::make_tuple(0, 0, 0, 'E'));
+		cache.emplace(i, 0);
 	}
+	counter = 0;
+	slots = 0;
+	hit = 0;
+	miss = 0;
+
 }
 void direct_cache::populate(int bytesinline,int numberoflines,std::string address)
 {
@@ -46,39 +57,38 @@ void direct_cache::populate(int bytesinline,int numberoflines,std::string addres
 	std::string tag = address.substr(0,tagwidth);
 	std::string offset = address.substr(tagwidth+linewidth,offsetwidth);
 	std::string line = address.substr(tagwidth, linewidth);
-	
-
-		if ((std::get<0>(cache.at(bintoint(line))) == bintoint(tag)) && (std::get<3>(cache.at(bintoint(line) == 'F'))))
-		{
+	int linenumber = bintoint(line);
+	int tagnumber = bintoint(tag);
+	auto it = cache.find(linenumber);
+	//we have a potential hit
 			//std::cout << "tag: " << stoll(tag, nullptr, 2) << std::endl;
 			//std::cout << "offset: " << offset << std::endl;
 			//std::cout << "line: " << line << std::endl;
 			//std::cout << "hit" << std::endl;
-			hit++;
-		}
-		else
-		{
-		cache.at(bintoint(line)) = (std::make_tuple(bintoint(tag), bintoint(line), bintoint(offset), 'F'));
-		//std::cout << "tag: " << bintoint(tag) << std::endl;
-		//std::cout << "offset: " << offset << std::endl;
-		//std::cout << "line: " << line << std::endl;
-		//std::cout << "miss" << std::endl;
-		miss++;
-		}
-
-
+			if (it->second == tagnumber)
+			{
+				hit++;
+			}
+			else
+			{
+				miss++;
+				cache.at(linenumber) = (tagnumber);
+			}
 }
 void direct_cache::print()
 {
+	/*
 	for (int i = 0; i < cache.size(); i++)
 	{
-		std::cout << std::get<0>(cache.at(i)) << std::endl;
+		std::cout << cache.at(i) << std::endl;
 	}
+	*/
 	hitrate = (float)hit / (float)(hit + miss);
 
 	std::cout << "hit: " << hit << std::endl;
 	std::cout << "miss: " << miss << std::endl;
 	std::cout << "hit rate: " << hitrate << std::endl;
+	std::cout << std::endl;
 }
 
 class set_cache
@@ -87,23 +97,43 @@ public:
 	void populate(int, int, int, std::string, int);
 	void initialize_cache(int,int);
 	void print();
+
+	struct set
+	{
+		//every line has:
+		//a tag
+		//a counter
+		std::vector<std::pair<int,int>> lines;
+	};
+	
 private:
 	int hit = 0;
 	int miss = 0;
 	float hitrate = 0;
-	std::vector<std::tuple<int, int, int, char, int>> cache;
+	//create a map
+	//use set number as the key
+	//use the actual set object as the value
+	
+	//the lines should be the actual tag followed by the counter
+	std::map<int, set*> cache;
 	int biggest = 0;
 
 };
 void set_cache::initialize_cache(int numberoflines, int linesperset)
 {
+	int numberofsets = numberoflines / linesperset;
 	if (cache.size() > 0)
 	{
 		cache.clear();
 	}
-	for (int i = 0; i < numberoflines; i++)
+	for (int i = 0; i < numberofsets; i++)
 	{
-		cache.push_back(std::make_tuple(0, 0, 0, 'E', 0));
+		set* s = new set;
+		for (int i = 0; i < linesperset; i++)
+		{
+			s->lines.push_back(std::make_pair(0,0));
+		}
+		cache.emplace(i,s);
 	}
 	counter = 1;
 	slots = 0;
@@ -113,34 +143,30 @@ void set_cache::initialize_cache(int numberoflines, int linesperset)
 void set_cache::populate(int bytesinline, int numberoflines, int linesinset, std::string address, int policy)
 {
 	int offsetwidth = ceil(log2(bytesinline));
-	int setwidth = ceil(log2(numberoflines / linesinset));
+	int setwidth = log2(ceil(numberoflines / linesinset));
 	int tagwidth = address.size() - offsetwidth - setwidth;
 	std::string tag = address.substr(0, tagwidth);
 	std::string offset = address.substr(tagwidth + setwidth, offsetwidth);
 	std::string set = address.substr(tagwidth, setwidth);
-	int setnum = bintoint(set);
-	int index = setnum * linesinset; //first index of our set
+	//int index = setnum * linesinset; //first index of our set
 	bool hitted = false;
 	int lowest = counter;
-	int slots = 0;
-	counter++;
+	int tagnumber = bintoint(tag);
+	int setnumber = bintoint(set);
 
+	//iterate through entire set and find our value
+		auto it = cache.find(setnumber);
 		for (int i = 0; i < linesinset; i++)
 		{
-			//we hit a value
-			if (std::get<0>(cache.at(index)) == bintoint(tag) && std::get<3>(cache.at(index)) == 'F')
+			if (it->second->lines.at(i).first == tagnumber)
 			{
-				//std::cout << "tag: " << stoll(tag, nullptr, 2) << std::endl;
-				//std::cout << "offset: " << offset << std::endl;
-				//std::cout << "set: " << set << std::endl;
-				hit++;
-				hitted = true;
 				if (policy == 0)
 				{
 					counter++;
-					//reset counter value to zero
-					cache.at(index) = (std::make_tuple(bintoint(tag), bintoint(set), bintoint(offset), 'F', counter));
+					it->second->lines.at(i).second = counter;
 				}
+				hit++;
+				hitted = true;
 				break;
 			}
 		}
@@ -149,57 +175,78 @@ void set_cache::populate(int bytesinline, int numberoflines, int linesinset, std
 		// find out which ones are full
 		//if set is full ,iterate again and find which value has the lesser counter value
 		//iterate again, increment counter, and perform a replacement
+		//our data doesnt exist,we need to add it.
 		if (hitted == false)
 		{
 			miss++;
-			for (int i = 0; i < linesinset; i++)
+			counter++;
+			int temp = 0;
+			//determine if were full
+			for (int i = 0; i < it->second->lines.size(); i++)
 			{
-				//find if were full
-				if (std::get<3>(cache.at(index + i)) == 'F')
+				if (it->second->lines.at(i).first != 0)
 				{
-					slots++;
-				}
-				else if(std::get<3>(cache.at(index + i)) == 'E')
-				{
-				   cache.at(index+i) = (std::make_tuple(bintoint(tag), bintoint(set), bintoint(offset), 'F', counter));
-				   break;
+					temp++;
 				}
 			}
-			//if were full
-			if (slots == linesinset)
+			//if were not full
+			if (temp != it->second->lines.size())
 			{
-				for (int i = 0; i < linesinset; i++)
+				//replace
+				for (int i = 0; i < it->second->lines.size(); i++)
 				{
-					//find lowest
-					if (std::get<4>(cache.at(index + i)) < counter)
+					//we have an empty spot
+					if (it->second->lines.at(i).first == 0)
 					{
-						lowest = std::get<4>(cache.at(index));
+						it->second->lines.at(i).first = tagnumber;
+						it->second->lines.at(i).second = counter;
+						break;
 					}
-				}
-				for (int i = 0; i < linesinset; i++)
-				{
-					//replace
-					if (std::get<4>(cache.at(index + i)) = lowest)
-					{
-						cache.at(index) = (std::make_tuple(bintoint(tag), bintoint(set), bintoint(offset), 'F', counter));
-					}
-					break;
 				}
 			}
-			
+			//were full
+			else if (temp == it->second->lines.size())
+			{
+				//find lowest counter data
+				for (int i = 0; i < it->second->lines.size(); i++)
+				{
+					if (it->second->lines.at(i).second < lowest)
+					{
+						lowest = it->second->lines.at(i).second;
+					}
+				}
+
+				//perform our replacement
+				for (int i = 0; i < it->second->lines.size(); i++)
+				{
+					if (it->second->lines.at(i).second == lowest)
+					{
+						it->second->lines.at(i).first = tagnumber;
+						it->second->lines.at(i).second = counter;
+						break;
+					}
+				}
+			}
 		}
-	
+		
 }
+	
 void set_cache::print()
 {
+	/*
 	for (int i = 0; i < cache.size(); i++)
 	{
-		std::cout << "set: " << std::get<1>(cache.at(i))<< " tag: " << std::get<0>(cache.at(i)) << " offset: "<< std::get<2>(cache.at(i)) << std::endl;
+		for (int j = 0; j < cache.at(i)->lines.size(); j++)
+		{
+			std::cout << "set: " << i << " tag: " << cache.at(i)->lines.at(j).first << std::endl;
+		}
 	}
+	*/
 	hitrate = (float)hit / (float)(hit + miss);
 	std::cout << "hit: " << hit << std::endl;
 	std::cout << "miss: " << miss << std::endl;
 	std::cout << "hit rate: " << hitrate << std::endl;
+	std::cout << std::endl;
 }
 class fully_cache
 {
@@ -207,13 +254,22 @@ public:
 	void populate(int, int, std::string,int);
 	void initialize_cache(int);
 	void print();
+	struct obj
+	{
+		int tag = 0;
+		int count = 0;
+		//iterate through whole thing and find tag
+		//if you hit the tag, thats fine.
+		//if you dont hit the tag, we need to add it in there by finding extra spae
+		//if there is no extra space, make some with counter method.
+	};
 private:
 	int hit = 0;
 	int miss = 0;
 	float hitrate = 0;
 	int biggest = 0;
 	int taken = 0;
-	std::vector<std::tuple<long long, long long, char, int>> cache;
+	std::vector<obj*> cache;
 };
 void fully_cache::initialize_cache(int numberoflines)
 {
@@ -223,40 +279,39 @@ void fully_cache::initialize_cache(int numberoflines)
 	}
 	for (int i = 0; i < numberoflines; i++)
 	{
-		cache.push_back(std::make_tuple(0, 0, 'E',0));
+		obj* j = new obj;
+		j->tag = 0;
+		j->count = 0;
+		cache.push_back(j);
 	}
-	counter = 1;
+	counter = 0;
 	slots = 0;
 	hit = 0;
 	miss = 0;
 }
 void fully_cache::populate(int bytesinline, int numberoflines, std::string address, int policy)
 {
-
+	//this SHOULD get rid of A4 and replace it with A3
 	int offsetwidth = ceil(log2(bytesinline));
-	int linewidth = 0;
+	int linewidth = ceil(log2(numberoflines));
 	int tagwidth = address.size() - offsetwidth - linewidth;
 	std::string tag = address.substr(0, tagwidth);
-	std::string offset = address.substr(tagwidth + linewidth, offsetwidth);
 	bool hitted = false;
 	int lowest = counter;
-	counter++;
+	int tagnumber = bintoint(tag);
 
-	//check if its a hit or a miss
-	//if its a hit, and the policy is equal to 0, then we increment the counter and replace the datas counter with our new one
-	//if its a miss, we need to add the data
-	//first, we increment the counter.
-	//then, we check which line has the lowest counter. we replace that line with our new line. and with our new counter value.
-	for (int i = 0; i < numberoflines; i++)
+	//iterate and see if we have the data
+	for (int i = 0; i < cache.size(); i++)
 	{
-		if (std::get<0>(cache.at(i)) == bintoint(tag) && std::get<3>(cache.at(i)) == 'F')
+		if (cache.at(i)->tag == tagnumber)
 		{
 			if (policy == 0)
 			{
 				counter++;
-				cache.at(i) = (std::make_tuple(bintoint(tag), bintoint(offset), 'F', counter));
+				cache.at(i)->count = counter;
 			}
 			hit++;
+			counter++;
 			hitted = true;
 			break;
 		}
@@ -265,56 +320,62 @@ void fully_cache::populate(int bytesinline, int numberoflines, std::string addre
 	if (hitted == false)
 	{
 		miss++;
-		//our cache is full
-		if (slots == numberoflines) 
+		counter++;
+		//if were not full
+		if (taken != cache.size())
 		{
-			for (int i = 0; i < numberoflines; i++)
+			//replace
+			for (int i = 0; i < cache.size(); i++)
 			{
-				if (std::get<3>(cache.at(i)) < lowest)
+				//we have an empty spot
+				if (cache.at(i)->tag == 0)
 				{
-					lowest = std::get<3>(cache.at(i));
-					
-				}
-			}
-			//find the lowest counter data
-			for (int i = 0; i < numberoflines; i++)
-			{
-				if (std::get<3>(cache.at(i)) == lowest)
-				{
-					cache.at(i) = (std::make_tuple(bintoint(tag), bintoint(offset), 'F', counter));
+					cache.at(i)->tag = tagnumber;
+					cache.at(i)->count = counter;
+					taken++;
 					break;
 				}
 			}
-
 		}
-		else
+		//were full
+		else if (taken == cache.size())
 		{
-			//find an empty slot
-			for (int i = 0; i < numberoflines; i++)
+			//find lowest counter data
+			for (int i = 0; i < cache.size(); i++)
 			{
-				if (std::get<2>(cache.at(i)) == 'E')
+				if (cache.at(i)->count < lowest)
 				{
-					cache.at(i) = (std::make_tuple(bintoint(tag), bintoint(offset), 'F', counter));
-					slots++;
+					lowest = cache.at(i)->count;
+				}
+			}
 
+			//perform our replacement
+			for (int i = 0; i < cache.size(); i++)
+			{
+				if (cache.at(i)->count == lowest)
+				{
+					cache.at(i)->tag = tagnumber;
+					cache.at(i)->count = counter;
+					break;
 				}
 			}
 		}
-	
 	}
-	
-	
-
 }
+
+	
 void fully_cache::print()
 {
+	/*
 	for (int i = 0; i < cache.size(); i++)
 	{
-		std::cout << std::get<0>(cache.at(i)) << std::endl;
+		std::cout << cache.at(i)->tag << std::endl;
 	}
+	*/
 	hitrate = (float)hit / (float)(hit + miss);
 	std::cout << "hit: " << hit << std::endl;
 	std::cout << "miss: " << miss << std::endl;
 	std::cout << "hit rate: " << hitrate << std::endl;
+	std::cout << std::endl;
 }
 

@@ -1,14 +1,15 @@
 ﻿  cache_simulator.cpp
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(15,30): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(43,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(44,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(45,57): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(115,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(116,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(117,56): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(236,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_map.h(238,57): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_simulator.cpp(46,10): warning C4101: 'byte': unreferenced local variable
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_simulator.cpp(47,11): warning C4101: 'count': unreferenced local variable
-C:\Users\steve\source\cda3101\cache_simulator\cache_simulator\cache_simulator.cpp(355,35): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-  cache_simulator.vcxproj -> C:\Users\steve\source\cda3101\cache_simulator\x64\Debug\cache_simulator.exe
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(15,30): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(54,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(55,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(56,57): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(145,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(146,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(147,56): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(295,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(296,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_map.h(297,57): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_simulator.cpp(46,10): warning C4101: 'byte': unreferenced local variable
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_simulator.cpp(47,11): warning C4101: 'count': unreferenced local variable
+C:\Users\steve\source\repos\cda3101\cache simulator\cache_simulator\cache_simulator.cpp(525,35): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  cache_simulator.vcxproj -> C:\Users\steve\source\repos\cda3101\cache simulator\x64\Debug\cache_simulator.exe

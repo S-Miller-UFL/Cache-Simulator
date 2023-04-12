@@ -93,12 +93,64 @@ int main()
 
         //3.store in data structure
         direct_cache dc;
+        //512
         dc.initialize_cache(size / linesize);
         for (int i = 0; i < v.size(); i++)
         {
             dc.populate(linesize, size / linesize, v.at(i));
         }
         //dc.populate(linesize, size / linesize, v.at(0));
+        std::cout << "size: " << size << std::endl;
+        dc.print();
+        //1024
+        size = size * 2;
+        dc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            dc.populate(linesize, size / linesize, v.at(i));
+        }
+        //dc.populate(linesize, size / linesize, v.at(0));
+        std::cout << "size: " << size << std::endl;
+        dc.print();
+        //2048
+        size = size * 2;
+        dc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            dc.populate(linesize, size / linesize, v.at(i));
+        }
+        //dc.populate(linesize, size / linesize, v.at(0));
+        std::cout << "size: " << size << std::endl;
+        dc.print();
+        //4096
+        size = size * 2;
+        dc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            dc.populate(linesize, size / linesize, v.at(i));
+        }
+        //dc.populate(linesize, size / linesize, v.at(0));
+        std::cout << "size: " << size << std::endl;
+        dc.print();
+        //8192
+        size = size * 2;
+        dc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            dc.populate(linesize, size / linesize, v.at(i));
+        }
+        //dc.populate(linesize, size / linesize, v.at(0));
+        std::cout << "size: " << size << std::endl;
+        dc.print();
+        //16384
+        size = size * 2;
+        dc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            dc.populate(linesize, size / linesize, v.at(i));
+        }
+        //dc.populate(linesize, size / linesize, v.at(0));
+        std::cout << "size: " << size << std::endl;
         dc.print();
     }
     else if (selection == 2)
@@ -114,11 +166,58 @@ int main()
         //1.convert to binary
 
         //2. split tag/offset
+        //512
         fc.initialize_cache(size / linesize);
         for (int i = 0; i < v.size(); i++)
         {
             fc.populate(linesize, size / linesize, v.at(i),policy);
         }
+        std::cout << "size: " << size << std::endl;
+        fc.print();
+        //1024
+        size = size * 2;
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), policy);
+        }
+        std::cout << "size: " << size << std::endl;
+        fc.print();
+        //2048
+        size = size * 2;
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), policy);
+        }
+        std::cout << "size: " << size << std::endl;
+        fc.print();
+        //4096
+        size = size * 2;
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), policy);
+        }
+        std::cout << "size: " << size << std::endl;
+        fc.print();
+        //8196
+        size = size * 2;
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), policy);
+        }
+        std::cout << "size: " << size << std::endl;
+        fc.print();
+        //16384
+        size = size * 2;
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), policy);
+        }
+        std::cout << "size: " << size << std::endl;
         fc.print();
     }
     else if (selection == 3)
@@ -197,6 +296,77 @@ int main()
         }
         std::cout << "set associative FIFO: " << std::endl;
         sc.print();
+    }
+    else if (selection == 5)
+    {
+    //because im fucking lazy
+    std::cout << "FIFO or LRU for replacement policy?" << std::endl;
+    std::cout << "0: LRU" << std::endl;
+    std::cout << "1: FIFO" << std::endl;
+    std::cin >> policy;
+    /*
+    * set associative map
+    */
+    //1.convert to binary
+    //2.split tag/set/offset
+    int linesinset = 0;
+    std::cout << "how many lines per set?" << std::endl;
+    std::cin >> linesinset;
+    set_cache sc;
+    //512
+    sc.initialize_cache(size / linesize, linesinset);
+    for (int i = 0; i < v.size(); i++)
+    {
+        sc.populate(linesize, size / linesize, linesinset, v.at(i), policy);
+    }
+    std::cout << "cache size: " << size << std::endl;
+    sc.print();
+    //1024
+    size = size * 2;
+    sc.initialize_cache((size) / linesize, linesinset);
+    for (int i = 0; i < v.size(); i++)
+    {
+        sc.populate(linesize, size / linesize, linesinset, v.at(i), policy);
+    }
+    std::cout << "cache size: " << size << std::endl;
+    sc.print();
+    //2048
+    size = size * 2;
+    sc.initialize_cache((size) / linesize, linesinset);
+    for (int i = 0; i < v.size(); i++)
+    {
+        sc.populate(linesize, size / linesize, linesinset, v.at(i), policy);
+    }
+    std::cout << "cache size: " << size << std::endl;
+    sc.print();
+    //4096
+    size = size * 2;
+    sc.initialize_cache((size) / linesize, linesinset);
+    for (int i = 0; i < v.size(); i++)
+    {
+        sc.populate(linesize, size / linesize, linesinset, v.at(i), policy);
+    }
+    std::cout << "cache size: " << size << std::endl;
+    sc.print();
+    //8192
+    size = size * 2;
+    sc.initialize_cache((size) / linesize, linesinset);
+    for (int i = 0; i < v.size(); i++)
+    {
+        sc.populate(linesize, size / linesize, linesinset, v.at(i), policy);
+    }
+    std::cout << "cache size: " << size << std::endl;
+    sc.print();
+    //16384
+    size = size * 2;
+    sc.initialize_cache((size) / linesize, linesinset);
+    for (int i = 0; i < v.size(); i++)
+    {
+        sc.populate(linesize, size / linesize, linesinset, v.at(i), policy);
+    }
+    std::cout << "cache size: " << size << std::endl;
+    sc.print();
+    
     }
 }
 
@@ -359,12 +529,26 @@ int hextoint(std::string hex)
     return val;
 }
 
+//your hit rates seem off, try using a map.
 /*
+* 512 byte cache:
 * direct mapped: 0.785403
-* RLU:
-* fully associative: 1.93918e-06
-* set associative: 0.706711
+* LRU:
+* fully associative:0.927607
+* set associative: 0.828462
 * FIFO:
-* fully associative: 5.81753e-06
-* set associative:  0.706711
+* fully associative: 0.911052
+* set associative: 0.819589
+* 
+* 1024 byte cache:
+* direct mapped: 0.831627
+* LRU:
+* fully associative:0.980232
+* set associative: 0.891239
+* FIFO:
+* fully associative: 0.973668
+* set associative: 0.884747
+* direct mapped should be lowest
+* set should be inbetween
+* fully associative should be highest
 */
