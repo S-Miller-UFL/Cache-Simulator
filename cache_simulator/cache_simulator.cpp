@@ -8,6 +8,7 @@
 #include <map>
 #include <math.h>
 #include <bitset>
+#include <algorithm>
 //1.create 3 map-based caches
 //  1.fully associative
 //  2.direct mapped
@@ -21,6 +22,9 @@
 * find offset: find out how to calculate offset
 * *optional* find line number (only for non fully associative)
 */
+int hextoint(std::string);
+std::string hextobin(std::string);
+int bintoint(std::string);
 int main()
 {
     int selection = 0;
@@ -30,22 +34,10 @@ int main()
     int hit = 0;
     int miss = 0;
     std::cout << "input the type of cache to be implemented:" << std::endl;
-    std::cout << "type 1 for fully associative" << std::endl;
-    std::cout << "type 2 for direct mapped" << std::endl;
+    std::cout << "type 1 for direct mapped" << std::endl;
+    std::cout << "type 2 for fully associative" << std::endl;
     std::cout << "type 3 for n-associative" << std::endl;
     std::cin >> selection;
-    if (selection == 1)
-    {
-        cache_type = 1;
-    }
-    else if (selection == 2)
-    {
-        cache_type = 2;
-    }
-    else if (selection == 3)
-    {
-        cache_type = 3;
-    }
 
     std::cout << "how big (in bytes) will the cache be?" << std::endl;
     std::cin >> size;
@@ -54,33 +46,21 @@ int main()
     char byte;
     short count;
     std::string line;
+    std::string input;
     std::vector<std::string> v;
-    std::ifstream file("read01.trace",std::ios_base::binary);
+    std::ifstream file("gcc.trace");
     if (file.is_open())
     {
-        while (!file.eof())
+        while (std::getline(file,input))
         {
-            file.read(&byte, 1);
-            file.read(&byte, 1);
+            std::stringstream stream(input);
             //file.read(&byte, 1);
             //file.read(&byte, 1);
-            for (int i = 0; i < 11; i++)
-            {
-                file.read(&byte, 1);
-                if (byte != '\n')
-                {
-                    line = line + byte;
-                }
-                //line = line + byte;
-                
-            }
-            file.read(&byte, 1);
-            file.read(&byte, 1);
-            if (line.size() != 0)
-            {
-                v.push_back(line);
-            }
-            line = "";
+
+            getline(stream,line, '\n');
+            line = line.substr(line.find('x')+1,line.length()-line.find('x'));
+            line = line.substr(0, line.find(' '));
+            v.push_back(line);
 
         }
         file.close();
@@ -91,13 +71,12 @@ int main()
     }
     for (int i = 0; i < v.size(); i++)
     {
-        int val = std::stol(v.at(i), nullptr, 16);
-        v.at(i) = std::bitset<32>(val).to_string();
+        v.at(i) = hextobin(v.at(i));
         //std::cout << v.at(i) << std::endl;
     }
+    int policy = 0;
     if (selection == 1)
     {
-
 
         //directed map
         /*
@@ -124,6 +103,10 @@ int main()
     }
     else if (selection == 2)
     {
+        std::cout << "FIFO or LRU for replacement policy?" << std::endl;
+        std::cout << "0: LRU" << std::endl;
+        std::cout << "1: FIFO" << std::endl;
+        std::cin >> policy;
         /*
         * full associative
         */
@@ -134,35 +117,254 @@ int main()
         fc.initialize_cache(size / linesize);
         for (int i = 0; i < v.size(); i++)
         {
-            fc.populate(linesize, size / linesize, v.at(i));
+            fc.populate(linesize, size / linesize, v.at(i),policy);
         }
         fc.print();
     }
     else if (selection == 3)
     {
+        std::cout << "FIFO or LRU for replacement policy?" << std::endl;
+        std::cout << "0: LRU" << std::endl;
+        std::cout << "1: FIFO" << std::endl;
+        std::cin >> policy;
         /*
         * set associative map
         */
         //1.convert to binary
         //2.split tag/set/offset
         int linesinset = 0;
-        std::cout << "how many sets per line?" << std::endl;
+        std::cout << "how many lines per set?" << std::endl;
         std::cin >> linesinset;
         set_cache sc;
-        sc.initialize_cache(size / linesize);
+        sc.initialize_cache(size / linesize, linesinset);
         for (int i = 0; i < v.size(); i++)
         {
-            if (sc.populate(linesize, size / linesize, linesinset, v.at(i))==true)
-            {
-                hit++;
-            }
-            else
-            {
-                miss++;
-            }
+            sc.populate(linesize, size / linesize, linesinset,v.at(i),policy);
         }
         sc.print();
     }
-    std::cout << "hit: " << hit << std::endl;
-    std::cout << "miss: " << miss << std::endl;
+    else if (selection == 4)
+    {
+        int linesinset = 0;
+        std::cout << "how many lines per set?" << std::endl;
+        std::cin >> linesinset; 
+
+        //direct cache
+        direct_cache dc;
+        dc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            dc.populate(linesize, size / linesize, v.at(i));
+        }
+        std::cout << "direct associative: " << std::endl;
+        dc.print();
+
+        /*
+        * full associative lru
+        */
+        fully_cache fc;
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), 0);
+        }
+        std::cout << "fully associative LRU: " << std::endl;
+        fc.print();
+        /*
+        * full associative fifo
+        */
+        fc.initialize_cache(size / linesize);
+        for (int i = 0; i < v.size(); i++)
+        {
+            fc.populate(linesize, size / linesize, v.at(i), 1);
+        }
+        std::cout << "fully associative FIFO: " << std::endl;
+        fc.print();
+        //set cache lru
+        set_cache sc;
+        sc.initialize_cache(size / linesize, linesinset);
+        for (int i = 0; i < v.size(); i++)
+        {
+            sc.populate(linesize, size / linesize, linesinset, v.at(i), 0);
+        }
+        std::cout << "set associative LRU: " << std::endl;
+        sc.print();
+        //set cache fifo
+        sc.initialize_cache(size / linesize, linesinset);
+        for (int i = 0; i < v.size(); i++)
+        {
+            sc.populate(linesize, size / linesize, linesinset, v.at(i), 1);
+        }
+        std::cout << "set associative FIFO: " << std::endl;
+        sc.print();
+    }
 }
+
+std::string hextobin(std::string hex)
+{
+    std::transform(hex.begin(), hex.end(), hex.begin(), ::toupper);
+    int val = 0;
+    std::string binary = "";
+    for (int i = 0; i < hex.length(); i++)
+    {
+        if (hex.at(i) == 'A')
+        {
+            binary += "1010";
+        }
+        else if (hex.at(i) == 'B')
+        {
+            binary += "1011";
+        }
+        else if (hex.at(i) == 'C')
+        {
+            binary += "1100";
+        }
+        else if (hex.at(i) == 'D')
+        {
+            binary += "1101";
+        }
+        else if (hex.at(i) == 'E')
+        {
+            binary += "1110";
+        }
+        else if (hex.at(i) == 'F')
+        {
+            binary += "1111";
+        }
+        else if (hex.at(i) == '0')
+        {
+            binary += "0000";
+        }
+        else if (hex.at(i) == '1')
+        {
+            binary += "0001";
+        }
+        else if (hex.at(i) == '2')
+        {
+            binary += "0010";
+        }
+        else if (hex.at(i) == '3')
+        {
+            binary += "0011";
+        }
+        else if (hex.at(i) == '4')
+        {
+            binary += "0100";
+        }
+        else if (hex.at(i) == '5')
+        {
+            binary += "0101";
+        }
+        else if (hex.at(i) == '6')
+        {
+            binary += "0110";
+        }
+        else if (hex.at(i) == '7')
+        {
+            binary += "0111";
+        }
+        else if (hex.at(i) == '8')
+        {
+            binary += "1000";
+        }
+        else if (hex.at(i) == '9')
+        {
+            binary += "1001";
+        }
+
+
+    }
+    return binary;
+}
+int hextoint(std::string hex)
+{
+    std::transform(hex.begin(), hex.end(), hex.begin(), ::toupper);
+    int val = 0;
+    std::string binary = "";
+    for (int i = 0; i < hex.length(); i++)
+    {
+        if (hex.at(i) == 'A')
+        {
+            binary += "1010";
+        }
+        else if (hex.at(i) == 'B')
+        {
+            binary += "1011";
+        }
+        else if (hex.at(i) == 'C')
+        {
+            binary += "1100";
+        }
+        else if (hex.at(i) == 'D')
+        {
+            binary += "1101";
+        }
+        else if (hex.at(i) == 'E')
+        {
+            binary += "1110";
+        }
+        else if (hex.at(i) == 'F')
+        {
+            binary += "1111";
+        }
+        else if (hex.at(i) == '0')
+        {
+            binary += "0000";
+        }
+        else if (hex.at(i) == '1')
+        {
+            binary += "0001";
+        }
+        else if (hex.at(i) == '2')
+        {
+            binary += "0010";
+        }
+        else if (hex.at(i) == '3')
+        {
+            binary += "0011";
+        }
+        else if (hex.at(i) == '4')
+        {
+            binary += "0100";
+        }
+        else if (hex.at(i) == '5')
+        {
+            binary += "0101";
+        }
+        else if (hex.at(i) == '6')
+        {
+            binary += "0110";
+        }
+        else if (hex.at(i) == '7')
+        {
+            binary += "0111";
+        }
+        else if (hex.at(i) == '8')
+        {
+            binary += "1000";
+        }
+        else if (hex.at(i) == '9')
+        {
+            binary += "1001";
+        }
+
+
+    }
+    for (int i = 0; i < binary.length(); i++)
+    {
+        val += (binary.at(i) - 48)*pow(2,(binary.length()-1)-i);
+    }
+    //std::cout << binary << std::endl;
+    //std::cout << val << std::endl;
+    return val;
+}
+
+/*
+* direct mapped: 0.785403
+* RLU:
+* fully associative: 1.93918e-06
+* set associative: 0.706711
+* FIFO:
+* fully associative: 5.81753e-06
+* set associative:  0.706711
+*/
