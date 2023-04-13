@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\steve\source\repos\cda3101\cache simulator\x64\Debug\cache_simulator.exe</FullPath>
+      <FullPath>C:\Users\steve\source\cda3101\cache_simulator\x64\Debug\cache_simulator.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

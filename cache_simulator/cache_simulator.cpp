@@ -33,15 +33,17 @@ int main()
     int linesize = 0;
     int hit = 0;
     int miss = 0;
+    std::cout << "cache simulator! Coded by Steven Miller" << std::endl;
     std::cout << "input the type of cache to be implemented:" << std::endl;
     std::cout << "type 1 for direct mapped" << std::endl;
     std::cout << "type 2 for fully associative" << std::endl;
     std::cout << "type 3 for n-associative" << std::endl;
+    std::cout << "type 4 for all tests" << std::endl;
     std::cin >> selection;
 
     std::cout << "how big (in bytes) will the cache be?" << std::endl;
     std::cin >> size;
-    std::cout << "how big will a block be?" << std::endl;
+    std::cout << "how big will a line be?" << std::endl;
     std::cin >> linesize;
     char byte;
     short count;
@@ -299,7 +301,6 @@ int main()
     }
     else if (selection == 5)
     {
-    //because im fucking lazy
     std::cout << "FIFO or LRU for replacement policy?" << std::endl;
     std::cout << "0: LRU" << std::endl;
     std::cout << "1: FIFO" << std::endl;
